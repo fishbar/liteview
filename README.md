@@ -1,7 +1,9 @@
 ##liteview
+
 a NodeJS template engine!
 
 example:
+
     var view = require('liteview');
     view.init(tpl_base); // set template base to view
     view.debug(true); //if needed, set debug ,view will console.log the debug info
@@ -11,9 +13,11 @@ example:
     });
 
 features:
+
     * simple syntax,type less , do more;
     * cache template into mem, so run more faster;
 api:
+
     * init(base);  init template base
     * debug(bool); set debug
     * handler(name,func); regist functions that called in the tpl
@@ -21,4 +25,5 @@ api:
     * render(tpl,data); return string (usually  html code);
 
 ... to be contine
+    
     next update ,template run in browser
