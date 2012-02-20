@@ -1,0 +1,21 @@
+{
+  "author": "fish <zhengxinlin@gmail.com> (https://github.com/fishbar)",
+  "name": "liteview",
+  "description": "node template engine,js template engine",
+  "version": "0.1.0",
+  "homepage": "https://github.com/fishbar/liteview",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:fishbar/liteview.git"
+  },
+  "main": "view.js",
+  "scripts": {
+    "test": "mocha test_view.js"
+  },
+  "engines": {
+    "node": ">0.6.0"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "optionalDependencies": {}
+}

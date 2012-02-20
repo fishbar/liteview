@@ -1,0 +1,16 @@
+#{foreach(#list)}
+    <li>
+    #{[name]}
+    #{if(#[child])}
+        <ul>
+        #{foreach(#[child])}
+            <li>#{[name]}</li>
+        #{end}
+        </ul>
+    #{elseif(#[com])}
+        <span>hasCom</span>
+    #{else}
+        <i>nothing</i>
+    #{end}
+    </li>
+#{end}
