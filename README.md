@@ -9,13 +9,54 @@ example:
     view.debug(true); //if needed, set debug ,view will console.log the debug info
     view.render('test.html',{
         name:'liteview',
-        version:'v x.x.x'
+        version:'v x.x.x',
+        list:[
+            {name:'fish',address:'abc'},
+            {name:'cat',address:'def',child:[{item:'apple'},{item:'orange'}]},
+            {name:'dog',address:'ghi',array:['a','b','c']},
+        ]
     });
+    
+    ============== tpl  test.html =============
+    <html>
+        <head></head>
+        <body>
+            #{if(#list)}
+            <ul>
+                #{foreach(#list)}
+                <li>
+                    #{[-]} : #{[name]} - #{[address]}
+                    #{foreach(#[child])}
+                        <span>#{[item]}</span>
+                    #{end}
+                    #{foreach(#[array])}
+                        <i>#{[_]}</i>
+                    #{end}
+                </li>
+                #{end}
+            </ul>
+            #{end}
+        </body>
+    </html>
 
 features:
 
     * simple syntax,type less , do more;
     * cache template into mem, so run more faster;
+
+syntax:
+    
+    * variable
+        #{var}   #var
+    * if else
+        #{if(#var)} #{elseif(#var1)} #{else} #{end}
+    * foreach
+        #{foreach(#var)} #{end}
+        variable in foreach using #{[xxx]} , #[xxx]
+        magic var : #{[-]} , #{[_]} , #{[%]}  // array index , array item , array length
+    * expression
+        #{(#a+1)} 
+        #{(func(#a+1))}
 api:
 
     * init(base);  init template base
