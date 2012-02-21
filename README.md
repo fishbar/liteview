@@ -1,8 +1,14 @@
 ##liteview
 
-a NodeJS template engine!
+a NodeJS template engine ! 
+fast ! 
+type less, do more !
+### install:
 
-example:
+    >npm install liteview  # install version 0.1.1 + 
+    
+
+### example:
 
     var view = require('liteview');
     view.init(tpl_base); // set template base to view
@@ -39,12 +45,12 @@ example:
         </body>
     </html>
 
-features:
+### features:
 
     * simple syntax,type less , do more;
     * cache template into mem, so run more faster;
 
-syntax:
+### syntax:
     
     * variable
         #{var}   #var
@@ -57,7 +63,7 @@ syntax:
     * expression
         #{(#a+1)} 
         #{(func(#a+1))}
-api:
+### api:
 
     * init(base);  init template base
     * debug(bool); set debug
@@ -65,6 +71,6 @@ api:
     * preload(tpl); pre-compile the tpl file, and tpl will be cached ,so when cal render, no more compile;
     * render(tpl,data); return string (usually  html code);
 
-... to be contine
+### ... to be contine
     
     next update ,template run in browser
