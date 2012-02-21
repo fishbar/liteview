@@ -7,6 +7,9 @@
             <li>#{[name]}</li>
         #{end}
         </ul>
+        #{foreach(#[array])}
+        <i>#{[_]}</i>
+        #{end}
     #{elseif(#[com])}
         <span>hasCom</span>
     #{else}

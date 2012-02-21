@@ -55,11 +55,11 @@ describe('LiteTemplate',function(){
     it('complex scene',function(){
       var res = view.render('complex.html',{
         list:[
-            {name:'fish',child:[{name:'cat'}]},
+            {name:'fish',child:[{name:'cat'}],array:[5,4]},
             {name:'test',com:true},
             {name:'a'}
         ]
       });  
-      expect(res).to.be('<li>fish<ul><li>cat</li></ul></li><li>test<span>hasCom</span></li><li>a<i>nothing</i></li>');
+      expect(res).to.be('<li>fish<ul><li>cat</li></ul><i>5</i><i>4</i></li><li>test<span>hasCom</span></li><li>a<i>nothing</i></li>');
     });
 });
