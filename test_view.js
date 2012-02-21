@@ -1,7 +1,7 @@
 var view = require('./view');
 var expect = require('expect.js');
 view.init(__dirname+'/test/');
-view.handler({
+view.reg({
     numfix:function(num){
         return num > 9 ? num : '0'+num;
     }

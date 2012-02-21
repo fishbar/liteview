@@ -7,7 +7,8 @@
      View = reuqire('view.js')
      View.init(root,const)
      View.debug(bool)
-     View.tpl(tpl)
+     View.reg(name,func);
+     View.preload(tpl)
      View.render(tpl,data)
 
  HOW TO USE:
@@ -43,7 +44,7 @@ exports.debug = function(_debug){
 /**
  regist handlers in tpl
  **/
-exports.handler = function(name,func){
+exports.reg = function(name,func){
     if(arguments.length === 1){ //
         var _hs = arguments[0];
         for(var i in _hs){
@@ -62,16 +63,16 @@ exports.handler = function(name,func){
     }
 }
 /**
- init tpl
+ preload tpl
  @param tpl <path> tpl related path,based on tpl root
  @param cst <const> tpl needed const , i.e. language s
  **/
-function tpl(_tpl){
+function preload(_tpl){
     var t = Tc.create(_tpl,root,cst,handler,debug);
-    cached[_tpl] = t;
+    if(!debug)cached[_tpl] = t;
     return t;
 }
-exports.tpl = tpl;
+exports.preload = preload;
 /**
  render tpl
  @param tpl <path> tpl related path ,based on root
@@ -81,7 +82,7 @@ exports.tpl = tpl;
 exports.render = function(_tpl,data){
     var t = cached[_tpl];
     if(!t){
-        t = tpl(_tpl);
+        t = preload(_tpl);
     }
     return t.render(data);
 }
