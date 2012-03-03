@@ -151,7 +151,7 @@ function common_exp_replace(str,flag_repeat){
             if(i>0 && str[i-1] == '\\')    // 非 string 的边界
                 continue;
             else if(flag_str == str[i]){
-                res.push(str.substr(offset_st,i-offset_st));
+                res.push(str.substr(offset_st,i-offset_st+1));
                 flag_str = '';
             }else{
                 if(offset_st != i)
