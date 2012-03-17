@@ -58,7 +58,7 @@ exports.reg = function(name,func){
         if(handler[name]){
             throw new Exception('view handler already exists : ' + name);
         }else{
-            handler[name] = _hs[name];
+            handler[name] = func;
         }
     }
 }
