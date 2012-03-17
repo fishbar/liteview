@@ -1,5 +1,6 @@
 <ul>
 #{foreach(#list)}
     <li>#{[%]}-#{[-]}-#{[name]}</li>
+    #{if(#[%]>=3)}a#{end}
 #{end}
 </ul>

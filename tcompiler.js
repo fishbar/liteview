@@ -85,7 +85,7 @@ function replace_cb(tplobj,stack,$0,$1,$2){
         res.push("}") ;
         pop = stack.pop();
         if(!pop){
-            console.error('[Template Error] unexpect #{end}')
+            tplobj.error('unexpect #{end}')
         }else if(pop.type == 'foreach'){
             tplobj.flag_repeat --;
         }
@@ -120,7 +120,9 @@ function replace_cb(tplobj,stack,$0,$1,$2){
         tplobj.flag_repeat++;
     }else if($1.indexOf('[') ===0){
         tmp = $1.substr(1,$1.length - 2);
-        if(tmp === '_'){ // [_] Array Item
+        if(flag_repeat == 0){
+            tplobj.error('vars in top level do not need #{[vars]},just #{vars}');
+        }else if(tmp === '_'){ // [_] Array Item
             res.push("t.push($_"+(flag_repeat-1)+"[$"+(flag_repeat-1)+"]);");
         }else if(tmp === '-'){ //[-] Array Index
             res.push("t.push($"+(flag_repeat-1)+");");
@@ -129,11 +131,7 @@ function replace_cb(tplobj,stack,$0,$1,$2){
         }else if(tmp.indexOf('$') === 0){ // [$_0].0
             res.push("t.push("+tmp.replace(/\.(\$\d+)/g,'[$1]')+");");
         }else{
-            if(flag_repeat == 0){
-                res.push("t.push(d."+tmp+");");
-            }else{
-                res.push("t.push($__"+(flag_repeat-1)+"."+tmp+");");
-            }
+            res.push("t.push($__"+(flag_repeat-1)+"."+tmp+");");
         }
     }else{
         res.push("t.push("+common_syntax($1)+");");
@@ -162,7 +160,7 @@ function common_exp_replace(str,flag_repeat){
         }
     }
     if(flag_str!==''){
-        console.error('[Template Error]condition expression:'+str);
+        throw new Error('[TPL ERROR]condition expression:'+str);
         return null;
     }
     
@@ -177,7 +175,7 @@ function common_inline_syntax(str,flag_repeat){
         .replace(/#-/g,'_index')
         .replace(/#%/g,'_len')
         .replace(/#(\w+)/g,"d['$1']")
-        .replace(/#\[([\-\.\w\$]+)\]/g,function($0,$1){
+        .replace(/#\[([%\-\.\w\$]+)\]/g,function($0,$1){
 	        return foreach_inline_syntax(flag_repeat,$0,$1);
 	    });
 }
@@ -194,29 +192,21 @@ function common_syntax(str){
             if(str.indexOf('const:') === 0)    // const
                 str = str.replace(/const:(\w+)/g,'ext.$1');
             else    //var
-                str = str.replace(/(\w+)/g,"d['$1']");
+                str = str.replace(/([\w\.]+)/g,"d.$1");
     }
     return str;
 }
 function foreach_inline_syntax(flag_repeat,$0,$1){
     var res,tmp = $0,type=$1;
-    if(tmp.indexOf('$') === 0){
-        res = tmp.replace(/\.(\$\d+)/g,'[$1]');
-    }else{
-        switch(type){
-            case '-':
-                res = "$"+(flag_repeat-1);break;
-            case '%':
-                res = "$$"+(flag_repeat-1);break;
-            case '_':
-                res = "$_"+(flag_repeat-1)+"[$"+(flag_repeat-1)+"]";break;
-            default:
-                if(flag_repeat == 0){
-                    res = '';
-                }else{
-                    res = "$__"+(flag_repeat-1)+"."+type;
-                }
-        }
+    switch(type){
+        case '-':
+            res = "$"+(flag_repeat-1);break;
+        case '%':
+            res = "$$"+(flag_repeat-1);break;
+        case '_':
+            res = "$_"+(flag_repeat-1)+"[$"+(flag_repeat-1)+"]";break;
+        default:
+            res = "$__"+(flag_repeat-1)+"."+type;
     }
     return res;
 }
@@ -254,8 +244,7 @@ Template.prototype={
         if(this._debug && !isInclude) console.log(tpl);
         if(isInclude) return tpl;
         if(this.stack.length){
-            console.error('[Template Error]unclosed token : '+this.stack.pop().type);
-            return function(){}
+            this.error('unclosed token : '+this.stack.pop().type);
         }else{
             try{
                 return new Function('d','_index','_len','ext','h',tpl);
@@ -264,7 +253,7 @@ Template.prototype={
                 tpl = tpl.replace(/for\(.*\n.*\n/g,function(str){
                     return str.replace(/\n/g,'');
                 })
-                console.error('[tpl compile error]\nfunction(d,_index,_len,ext,h){\n'+tpl+'}');
+                this.error('[TPL ERROR]\nfunction(d,_index,_len,ext,h){\n'+tpl+'}');
                 return function(){}
             }
         }
@@ -286,7 +275,7 @@ Template.prototype={
         this._h[name] = func;
     },
     error:function(msg){
-    	console.error('[TPL]:'+msg);
+    	throw new Error('[TPL]:'+msg);
     }
 }
 

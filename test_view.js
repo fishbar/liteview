@@ -30,7 +30,7 @@ describe('LiteTemplate',function(){
                 {name:'snoopy'}
             ]
         });
-        expect(res).to.be('<ul><li>3-0-fish</li><li>3-1-cat</li><li>3-2-snoopy</li></ul>');
+        expect(res).to.be('<ul><li>3-0-fish</li>a<li>3-1-cat</li>a<li>3-2-snoopy</li>a</ul>');
     });
     
     it('variable not exist',function(){
