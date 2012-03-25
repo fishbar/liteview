@@ -40,7 +40,7 @@ type less, do more !
                         <i>#{[_]}</i>
                     #{end}
                     
-                    #{for(var i=0;i<#totalPage;i++)}
+                    #{for(var i=0;i<#var:totalPage;i++)}
                         <a href="/page/#{var:i}">page-#{var:i}</a>
                     #{end}
                 </li>
@@ -88,4 +88,4 @@ type less, do more !
 
 ### ... to be contine
     
-    next update ,template run in browser
+    next update : add syntax #{literal}.....#{literalend}
