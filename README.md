@@ -27,6 +27,7 @@ type less, do more !
     <html>
         <head></head>
         <body>
+            #{set(totalPage = 5)}
             #{if(#list)}
             <ul>
                 #{foreach(#list)}
@@ -38,12 +39,18 @@ type less, do more !
                     #{foreach(#[array])}
                         <i>#{[_]}</i>
                     #{end}
+                    
+                    #{for(var i=0;i<#totalPage;i++)}
+                        <a href="/page/#{var:i}">page-#{var:i}</a>
+                    #{end}
                 </li>
                 #{end}
             </ul>
             #{end}
         </body>
     </html>
+    
+    PS: inline script must add ";" when needed !!!
 
 ### features:
 
@@ -51,15 +58,23 @@ type less, do more !
     * cache template into mem, so run more faster;
 
 ### syntax:
-    
-    * variable
-        #{var}   #var
+    * variable define , set up local vars, it's different with replacement
+        #{set(a=0)}  equal in javascript: var a = 0;
+        #{var:a}
+    * single replacement
+        #{replacement}   #var
     * if else
-        #{if(#var)} #{elseif(#var1)} #{else} #{end}
+        #{if(#replacement)} #{elseif(#replacement)} #{else} #{end}
     * foreach
-        #{foreach(#var)} #{end}
-        variable in foreach using #{[xxx]} , #[xxx]
+        #{foreach(#replacement)} #{end}
+        replacement in foreach using #{[xxx]} , #[xxx]
         magic var : #{[-]} , #{[_]} , #{[%]}  // array index , array item , array length
+    * for
+        #{for(var n=0;n<#total;n++)}
+            page#{var:n}
+        #{end}
+    * const
+        #{const:xxx}
     * expression
         #{(#a+1)} 
         #{(func(#a+1))}
