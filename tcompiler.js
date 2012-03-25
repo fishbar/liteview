@@ -77,10 +77,11 @@ function replace_cb(tplobj,stack,$0,$1,$2){
     if(!$1){
         return '';
     }else if( $1.indexOf('include(')===0 ){
-        //TODO include file process
         //for node tpl engine
         var f = $1.substr(8,$1.length-9);
         res.push(tplobj._fetch(f,true));
+    }else if($1.indexOf('set(') === 0){
+        res.push("var "+common_exp_replace($1.substr(4,$1.length-5),flag_repeat)+";");
     }else if($1 === 'end'){
         res.push("}") ;
         pop = stack.pop();
@@ -102,7 +103,7 @@ function replace_cb(tplobj,stack,$0,$1,$2){
             return '(h.'+$_1+' ? h.'+$_1+':' + $_1 + ')(';
         });
         res.push("t.push("+common_exp_replace($1,flag_repeat)+");");
-    }else if($1.indexOf('for(')){
+    }else if($1.indexOf('for(') === 0){
       stack.push({type:'for'});
       exp = $1.substr(4,$1.length - 5);
       res.push('for('+common_exp_replace(exp,flag_repeat)+'){');
@@ -175,6 +176,7 @@ function common_exp_replace(str,flag_repeat){
 /** 变量,index,对象本身，数组长度 */
 function common_inline_syntax(str,flag_repeat){
     return str.replace(/#const:(\w+)/g,'ext.$1')
+        .replace(/#var:(\w+)/g,'$1')
         .replace(/#_/g,"d")
         .replace(/#-/g,'_index')
         .replace(/#%/g,'_len')
@@ -194,9 +196,11 @@ function common_syntax(str){
             str = 'd';break;
         default:
             if(str.indexOf('const:') === 0)    // const
-                str = str.replace(/const:(\w+)/g,'ext.$1');
+              str = str.replace(/const:(\w+)/g,'ext.$1');
+            else if(str.indexOf('var:') === 0)
+              str = str.replace(/var:(\w+)/g,'$1');
             else    //var
-                str = str.replace(/([\w\.]+)/g,"d.$1");
+              str = str.replace(/([\w\.]+)/g,"d.$1");
     }
     return str;
 }
