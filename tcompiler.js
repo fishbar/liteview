@@ -81,7 +81,14 @@ function replace_cb(tplobj,stack,$0,$1,$2){
         var f = $1.substr(8,$1.length-9);
         res.push(tplobj._fetch(f,true));
     }else if($1.indexOf('set(') === 0){
-        res.push("var "+common_exp_replace($1.substr(4,$1.length-5),flag_repeat)+";");
+        $1 = $1.substr(4,$1.length-5);
+        if($1){
+          if($1.match(/^\s*(\$|_)/)){
+            tplobj.error('var name denial,do not using "$,_" as first letter of the variable');
+          }else{
+            res.push("var "+common_exp_replace($1,flag_repeat)+";");
+          }
+        }
     }else if($1 === 'end'){
         res.push("}") ;
         pop = stack.pop();
@@ -100,12 +107,15 @@ function replace_cb(tplobj,stack,$0,$1,$2){
     }else if($1.indexOf('(') === 0){
         $1 = $1.substr(1,$1.length-2);
         $1 = $1.replace(/^(\w+)\(/,function($_0,$_1){
-            return '(h.'+$_1+' ? h.'+$_1+':' + $_1 + ')(';
+            return '(_h.'+$_1+' ? _h.'+$_1+':' + $_1 + ')(';
         });
         res.push("t.push("+common_exp_replace($1,flag_repeat)+");");
     }else if($1.indexOf('for(') === 0){
       stack.push({type:'for'});
       exp = $1.substr(4,$1.length - 5);
+      if(exp.match(/^var\s*(\$|_)/)){ 
+        tplobj.error('var name denial,do not using "$,_" as first letter of the variable');
+      }
       res.push('for('+common_exp_replace(exp,flag_repeat)+'){');
     }else if($1.indexOf('foreach(') === 0){
         var tmp;
@@ -116,7 +126,7 @@ function replace_cb(tplobj,stack,$0,$1,$2){
             res.push("var $_"+flag_repeat+"=$__"+(flag_repeat-1)+"."+tmp);
         }else{
             tmp = exp.substr(1,exp.length - 1);
-            res.push("var $_"+flag_repeat+"=d."+tmp);
+            res.push("var $_"+flag_repeat+"=_d."+tmp);
         }
         _len = '$$'+flag_repeat;
         res.push(",$__",flag_repeat,";for(var $",flag_repeat,'=0,',_len,'=$_',flag_repeat,'?','$_',flag_repeat,".length:0;$",flag_repeat," < ",_len,";$",flag_repeat,"++){");
@@ -153,8 +163,8 @@ function common_exp_replace(str,flag_repeat){
         if(str[i] == '"' || str[i] == "'"){
             if(i>0 && str[i-1] == '\\')    // 非 string 的边界
                 continue;
-            else if(flag_str == str[i]){
-                res.push(str.substr(offset_st,i-offset_st+1));
+            else if(flag_str == str[i]){ // string 结束
+                res.push(str.substr(offset_st,i-offset_st+1).replace(/\\\\/g,'\\'));
                 flag_str = '';
             }else{
                 if(offset_st != i)
@@ -175,12 +185,12 @@ function common_exp_replace(str,flag_repeat){
 }
 /** 变量,index,对象本身，数组长度 */
 function common_inline_syntax(str,flag_repeat){
-    return str.replace(/#const:(\w+)/g,'ext.$1')
+    return str.replace(/#const:(\w+)/g,'_ext.$1')
         .replace(/#var:(\w+)/g,'$1')
-        .replace(/#_/g,"d")
+        .replace(/#_/g,"_d")
         .replace(/#-/g,'_index')
         .replace(/#%/g,'_len')
-        .replace(/#(\w+)/g,"d['$1']")
+        .replace(/#(\w+)/g,"_d['$1']")
         .replace(/#\[([%\-\.\w\$]+)\]/g,function($0,$1){
 	        return foreach_inline_syntax(flag_repeat,$0,$1);
 	    });
@@ -193,14 +203,14 @@ function common_syntax(str){
         case '%':
             str = '_len';break;
         case '_':
-            str = 'd';break;
+            str = '_d';break;
         default:
             if(str.indexOf('const:') === 0)    // const
-              str = str.replace(/const:(\w+)/g,'ext.$1');
+              str = str.replace(/const:(\w+)/g,'_ext.$1');
             else if(str.indexOf('var:') === 0)
               str = str.replace(/var:(\w+)/g,'$1');
             else    //var
-              str = str.replace(/([\w\.]+)/g,"d.$1");
+              str = str.replace(/([\w\.]+)/g,"_d.$1");
     }
     return str;
 }
@@ -255,13 +265,13 @@ Template.prototype={
             this.error('unclosed token : '+this.stack.pop().type);
         }else{
             try{
-                return new Function('d','_index','_len','ext','h',tpl);
+                return new Function('_d','_index','_len','_ext','_h',tpl);
             }catch(e){
                 tpl = tpl.replace(/(;|\{|\})/g,'$1\n');
                 tpl = tpl.replace(/for\(.*\n.*\n/g,function(str){
                     return str.replace(/\n/g,'');
                 })
-                this.error('[TPL ERROR]\nfunction(d,_index,_len,ext,h){\n'+tpl+'}');
+                this.error('[TPL ERROR]\nfunction(_d,_index,_len,_ext,_h){\n'+tpl+'}');
                 return function(){}
             }
         }
