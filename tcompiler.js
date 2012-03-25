@@ -58,7 +58,7 @@ function parseTpl(tplobj,tpl,merge){
     var foot = merge ? "');" : "');return t.join('');";
     var stack = tplobj.stack; 
     //去除引号干扰
-    tpl = tpl.replace(/(\"|\')/g,'\\$1');
+    tpl = tpl.replace(/(\"|\'|\\)/g,'\\$1');
     //去除没用的空tab
     tpl = tpl.replace(/\s*(\t|\n|\r)+\s*/g,'');
     //语法解析
@@ -102,6 +102,10 @@ function replace_cb(tplobj,stack,$0,$1,$2){
             return '(h.'+$_1+' ? h.'+$_1+':' + $_1 + ')(';
         });
         res.push("t.push("+common_exp_replace($1,flag_repeat)+");");
+    }else if($1.indexOf('for(')){
+      stack.push({type:'for'});
+      exp = $1.substr(4,$1.length - 5);
+      res.push('for('+common_exp_replace(exp,flag_repeat)+'){');
     }else if($1.indexOf('foreach(') === 0){
         var tmp;
         exp = $1.substr(8,$1.length-9);
