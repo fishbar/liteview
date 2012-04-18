@@ -12,6 +12,10 @@ describe('LiteTemplate',function(){
     var res = view.render('script.html',{});
     expect(res.indexOf('\\w')).to.not.be(-1);
   });
+  it('#{if(regexp)}',function(){
+    var res = view.render('regexp.html',{tt:"cc.js"});
+    expect(res).to.be('regok'); 
+  });
   it('#{set()},#{for()}',function(){
     var res = view.render('for.html');
     expect(res).to.be('012345');

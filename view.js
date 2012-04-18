@@ -23,7 +23,7 @@ var Tc = require('./tcompiler'),
     cached = [],
     root,
     debug,
-    cst,
+    cst = {},
     handler = {};
 /**
  init view
@@ -61,7 +61,15 @@ exports.reg = function(name,func){
             handler[name] = func;
         }
     }
-}
+};
+/**
+  set const 
+  **/
+exports.const = function( _cst ){
+  for(var i in _cst){
+    cst[i] = _cst[i];
+  }
+};
 /**
  preload tpl
  @param tpl <path> tpl related path,based on tpl root

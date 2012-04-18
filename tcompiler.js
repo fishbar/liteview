@@ -155,7 +155,7 @@ function replace_cb(tplobj,stack,$0,$1,$2){
     return res.join('');
 }
 function common_exp_replace(str,flag_repeat){
-    str = str.replace(/\\(\"|\')/g,'$1');
+    str = str.replace(/\\(\"|\'|\\)/g,'$1');
     var res = [];
     var flag_str = '';
     var offset_st = 0 , offset_end = 0;
@@ -166,12 +166,13 @@ function common_exp_replace(str,flag_repeat){
             else if(flag_str == str[i]){ // string 结束
                 res.push(str.substr(offset_st,i-offset_st+1).replace(/\\\\/g,'\\'));
                 flag_str = '';
+                offset_st = i+1;
             }else{
                 if(offset_st != i)
                     res.push(common_inline_syntax(str.substr(offset_st,i-offset_st),flag_repeat));
                 flag_str = str[i];
+                offset_st = i;
             }
-            offset_st = i;
         }
     }
     if(flag_str!==''){
