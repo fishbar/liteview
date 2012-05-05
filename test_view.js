@@ -6,7 +6,7 @@ view.reg({
     return num > 9 ? num : '0'+num;
   }
 })
-view.debug(true);
+view.debug(false);
 describe('LiteTemplate',function(){
   it('inline script with regexp, #{set()} , #{for(var i=0;i<#xxx;i++)}',function(){
     var res = view.render('script.html',{});
@@ -14,7 +14,7 @@ describe('LiteTemplate',function(){
   });
   it('#{if(regexp)}',function(){
     var res = view.render('regexp.html',{tt:"cc.js"});
-    expect(res).to.be('regok'); 
+    expect(res).to.be('regok');
   });
   it('#{set()},#{for()}',function(){
     var res = view.render('for.html');
