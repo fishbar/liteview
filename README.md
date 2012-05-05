@@ -78,14 +78,19 @@ type less, do more !
     * expression
         #{(#a+1)} 
         #{(func(#a+1))}
+    * literal
+        display content without syntax parse
+        #{literal} 
+        literal output , useful for inline-script in html
+        #{literal}
 ### api:
 
     * init(base);  init template base
     * debug(bool); set debug
     * reg(name,func); regist functions that called in the tpl
     * preload(tpl); pre-compile the tpl file, and tpl will be cached ,so when cal render, no more compile;
-    * render(tpl,data); return string (usually  html code);
+    * render(tpl,[data]); return string (usually  html code);
 
 ### ... to be contine
     
-    next update : add syntax #{literal}.....#{literalend}
+    adapter to express connect 
