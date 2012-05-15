@@ -85,9 +85,10 @@ type less, do more !
         #{literal}
 ### api:
 
-    * init(base);  init template base
+    * init(base,[const]);  init template base ,constants
     * debug(bool); set debug
     * reg(name,func); regist functions that called in the tpl
+    * constant(const); set constants
     * preload(tpl); pre-compile the tpl file, and tpl will be cached ,so when cal render, no more compile;
     * render(tpl,[data]); return string (usually  html code);
 

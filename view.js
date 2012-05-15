@@ -5,7 +5,7 @@
      2. with debug model, reload tpl each call
  API
      View = reuqire('view.js')
-     View.init(root,const)
+     View.init(root,constant)
      View.debug(bool)
      View.reg(name,func);
      View.preload(tpl)
@@ -14,7 +14,7 @@
  HOW TO USE:
      Global setting:
          var view = require('view.js');
-         view.init(root,const);
+         view.init(root,constant);
          view.debug(true);
      controller:
          view.render(tpl,data);
@@ -28,7 +28,7 @@ var Tc = require('./tcompiler'),
 /**
  init view
  @param _root <string> tpl base
- @param _cst <object> const object ,common vars for tpls
+ @param _cst <object> constant object ,common vars for tpls
  **/
 exports.init = function(_root,_cst){
     root = _root;
@@ -63,9 +63,9 @@ exports.reg = function(name,func){
     }
 };
 /**
-  set const 
+  set constant 
   **/
-exports.const = function( _cst ){
+exports.constant = function( _cst ){
   for(var i in _cst){
     cst[i] = _cst[i];
   }
@@ -73,7 +73,6 @@ exports.const = function( _cst ){
 /**
  preload tpl
  @param tpl <path> tpl related path,based on tpl root
- @param cst <const> tpl needed const , i.e. language s
  **/
 function preload(_tpl){
     var t = Tc.create(_tpl,root,cst,handler,debug);
