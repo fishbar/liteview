@@ -1,8 +1,12 @@
 {
-  "author": "fish <zhengxinlin@gmail.com> (https://github.com/fishbar)",
+  "author": {
+    "name": "fish",
+    "email": "zhengxinlin@gmail.com",
+    "url": "https://github.com/fishbar"
+  },
   "name": "liteview",
   "description": "node template engine,js template engine",
-  "version": "0.1.11",
+  "version": "0.2.0",
   "homepage": "https://github.com/fishbar/liteview",
   "repository": {
     "type": "git",

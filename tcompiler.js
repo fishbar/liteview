@@ -66,7 +66,7 @@ function parseTpl(tplobj,tpl,literal){
   tpl = tpl.replace(/(\"|\'|\\)/g,'\\$1');
   if(!literal){
     //去除没用的空tab
-    if(tplobj._debug){
+    if(tplobj._debug || !tplobj._compress){
         tpl = tpl.replace(/\r?\n/g,'\\n');
     }else{
         tpl = tpl.replace(/\s*(\t|\n|\r)+\s*/g,'');
@@ -245,8 +245,9 @@ function foreach_inline_syntax(flag_repeat,$0,$1){
 }
 
 
-function Template(tpl,root,cst,handler,debug){
-  this._const = cst
+function Template(tpl,root,cst,handler,compress,debug){
+  this._const = cst;
+  this._compress = compress;
   this._debug = debug;
   this._root = root;
   // handlers for field process
@@ -257,8 +258,7 @@ function Template(tpl,root,cst,handler,debug){
 };
 
 Template.prototype={
-  
-  _parse:function(tpl,bool){
+  _parse:function(tpl,bool,literal){
     var head = bool ? "t.push('" :"var t=[];_d=_d?_d:{};t.push('";
     var foot = bool ? "');" : "');return t.join('');";
     var f = path.join(this._root,tpl);
@@ -268,16 +268,21 @@ Template.prototype={
     }catch(e){
       this.error('include tpl error:'+tpl);
     }
-    // splite #{literal} for debug
-    var res = _tpl.split(/#\{literal\}/);
-    if(res.length % 2 !== 1){
-        this.error('unclosed #literal : '+tpl+' , ' + this.stack.pop().type);
-    }
-    for(var i = 0 ; i < res.length ; i++){
-        // parse odd item
-        res[i] = parseTpl(this,res[i]);
-        i++;
-        res[i] = parseTpl(this,res[i],true);
+    if(!literal){
+      // splite #{literal} for debug
+      var res = _tpl.split(/#\{literal\}/);
+      if(res.length % 2 !== 1){
+          this.error('unclosed #literal : '+tpl+' , ' + this.stack.pop().type);
+      }
+      for(var i = 0 ; i < res.length ; i++){
+          // parse odd item
+          res[i] = parseTpl(this,res[i]);
+          i++;
+          if(i < res.length)
+          res[i] = parseTpl(this,res[i],true);
+      }
+    }else{
+      res.push(parseTpl(this,_tpl,true));
     }
     res.unshift(head);
     res.push(foot);

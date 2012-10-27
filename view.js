@@ -23,6 +23,7 @@ var Tc = require('./tcompiler'),
     cached = [],
     root,
     debug,
+    compress = true;
     cst = {},
     handler = {};
 /**
@@ -32,7 +33,7 @@ var Tc = require('./tcompiler'),
  **/
 exports.init = function(_root,_cst){
     root = _root;
-    cst = _cst;
+    cst = _cst ? _cst : {};
 };
 /**
  switch debug model
@@ -40,6 +41,10 @@ exports.init = function(_root,_cst){
  **/
 exports.debug = function(_debug){
     debug = _debug;
+};
+
+exports.compress = function(bool){
+    compress = bool;
 };
 /**
  regist handlers in tpl
@@ -75,7 +80,7 @@ exports.constant = function( _cst ){
  @param tpl <path> tpl related path,based on tpl root
  **/
 function preload(_tpl){
-    var t = Tc.create(_tpl,root,cst,handler,debug);
+    var t = Tc.create(_tpl,root,cst,handler,compress,debug);
     if(!debug)cached[_tpl] = t;
     return t;
 }
@@ -93,3 +98,13 @@ exports.render = function(_tpl,data){
     }
     return t.render(data);
 }
+
+// pre regist functions
+exports.reg('encodeHTML',function(str){
+    if(!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/"/g,'&#034;').replace(/\'/g,'&#039;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+});
+exports.reg('decodeHTML',function(str){
+    if(!str) return '';
+    return str.replace(/&amp;/g,'&').replace(/&#034;/g,'"').replace(/&#039;/g,'\'').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+});
