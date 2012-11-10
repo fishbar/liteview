@@ -35,9 +35,14 @@
  *       #{foreach(#[user])}
  *         #{[name]}
  *         #{[$_0.$0.id]}
- *       #end
- *     #end
- * 
+ *       #{end}
+ *     #{end}
+ *
+ *  #{block=name}
+ *  #{blockend}
+ *
+ *  invoke
+ *    #{block:name}
  * @exsample
  * 
  *   var tpl = '<div>#{title}<p>#{floor(#price)}</p>#{if(#desc)}<p>#{desc}</p>#{endif}</div>';
@@ -88,12 +93,21 @@ function parseTpl(tplobj,tpl,literal){
 function replace_cb(tplobj,stack,$0,$1,$2){
   var res=["');"],exp,pop,_len;
   var flag_repeat = tplobj.flag_repeat;
+  var tmp;
   if(!$1){
     return '';
+  }else if( $1.match(/^block\s*=\s*(\w+)/)){
+    tmp = $1.match(/^block\s*=\s*(\w+)/)[1];
+    res.push('function block_'+ tmp + "(){var t=[];");
+  }else if( $1 === 'blockend' ){
+    res.push("return t.join('');}");
+  }else if($1.match(/^block\s*:\s*(\w+)/)){
+    tmp = $1.match(/^block\s*:\s*(\w+)/)[1];
+    res.push('t.push(block_'+tmp+'());');
   }else if( $1.indexOf('include(')===0 ){
     //for node tpl engine
-    var f = $1.substr(8,$1.length-9);
-    res.push(tplobj._parse(f,true));
+    tmp = $1.substr(8,$1.length-9);
+    res.push(tplobj._parse(tmp,true));
   }else if($1.indexOf('set(') === 0){
     $1 = $1.substr(4,$1.length-5);
     if($1){
@@ -298,6 +312,7 @@ Template.prototype={
     if(this.stack.length){
       this.error('unclosed token : '+this.stack.pop().type);
     }else{
+      tpl = tpl.replace(/t\.push\(\'\'\);/g,'');
       try{
         return new Function('_d','_index','_len','_ext','_h',tpl);
       }catch(e){

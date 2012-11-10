@@ -1,6 +1,15 @@
-var view = require('./view');
+var jsc = require('jscoverage');
+require = jsc.require(module);
+var Tc = require('./tcompiler',true);
+var view = require('./view',true);
 var expect = require('expect.js');
+process.on('exit',function(){
+  jsc.coverage();
+})
 view.init(__dirname+'/test/');
+view.constant({
+  root:'const:abc'
+});
 view.reg({
   numfix:function(num){
     return num > 9 ? num : '0'+num;
@@ -31,7 +40,7 @@ describe('LiteTemplate',function(){
         {name:'cat'}
       ]
     });
-    expect(res).to.be('<title>test</title><li id="n_0">cat</li><div>fish</div><ul><li id="n_0">fish</li></ul>');
+    expect(res).to.be('<title>test</title><li id="n_0">cat</li><script type="text/javascript">fish</script><div>fish</div><ul><li id="n_0">fish</li></ul>');
   });
   it('repeat_syntax',function(){
     var res = view.render('repeat.html',{
@@ -70,5 +79,15 @@ describe('LiteTemplate',function(){
     ]
     });  
     expect(res).to.be('<li>fish<ul><li>cat</li></ul><i>5</i><i>4</i></li><li>test<span>hasCom</span></li><li>a<i>nothing</i></li>');
+  });
+  it('test const, encodeHTML,decodeHTML',function(){
+    var res = view.render('constant.html',{
+      name : '<abc>',
+      nameEncoded : '&amp;abc&gt;&lt;'
+    });
+    expect(res).to.match(/true/);
+    expect(res).to.match(/const:abc/);
+    expect(res).to.match(/&lt;abc&gt;/);
+    expect(res).to.match(/&abc></);
   });
 });
