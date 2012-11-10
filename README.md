@@ -83,6 +83,14 @@ type less, do more !
         #{literal} 
         literal output , useful for inline-script in html
         #{literal}
+    * block
+        define a code block
+        #{block=test}
+          //TODO your html code here , everything can be here
+        #{blockend}
+        invoke block
+        #{block:test}
+
 ### api:
 
     * init(base,[const]);  init template base ,constants
