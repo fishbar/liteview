@@ -1,7 +1,7 @@
 var jsc = require('jscoverage');
 require = jsc.require(module);
 var Tc = require('./tcompiler',true);
-var view = require('./view',true);
+var view = require('./view',true).create();
 var expect = require('expect.js');
 process.on('exit',function(){
   jsc.coverage();

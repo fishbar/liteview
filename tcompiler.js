@@ -280,7 +280,7 @@ Template.prototype={
     try{
       _tpl = fs.readFileSync(f,'utf8');
     }catch(e){
-      this.error('include tpl error:'+tpl);
+      this.error('include tpl error:'+tpl+':'+f);
     }
     if(!literal){
       // splite #{literal} for debug
