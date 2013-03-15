@@ -10,7 +10,7 @@ type less, do more !
 
 ### example:
 
-    var view = require('liteview');
+    var view = require('liteview').create();
     view.init(tpl_base); // set template base to view
     view.debug(true); //if needed, set debug ,view will console.log the debug info
     view.render('test.html',{
