@@ -6,7 +6,7 @@
   },
   "name": "liteview",
   "description": "node template engine,js template engine",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "homepage": "https://github.com/fishbar/liteview",
   "repository": {
     "type": "git",
