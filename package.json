@@ -14,12 +14,14 @@
   },
   "main": "view.js",
   "scripts": {
-    "test": "mocha test_view.js"
+    "test": "mocha test_view.js -R list"
   },
   "engines": {
     "node": ">0.6.0"
   },
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "jscoverage": "*"
+  },
   "optionalDependencies": {}
 }

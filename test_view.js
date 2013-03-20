@@ -1,11 +1,8 @@
 var jsc = require('jscoverage');
-require = jsc.require(module);
+require = jsc.mock(module);
 var Tc = require('./tcompiler', true);
 var view = require('./view', true).create();
 var expect = require('expect.js');
-process.on('exit', function () {
-  jsc.coverage();
-});
 view.init(__dirname + '/test/');
 view.constant({
   root: 'const:abc'
