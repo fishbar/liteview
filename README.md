@@ -1,9 +1,10 @@
-Liteview[![Build Status](https://secure.travis-ci.org/fishbar/liteview.png)](http://travis-ci.org/fishbar/liteview)
+Liteview [![Build Status](https://secure.travis-ci.org/fishbar/liteview.png)](http://travis-ci.org/fishbar/liteview)
 ===================
 
 - A NodeJS template engine!
 - fast ! 
 - type less, do more !
+
 ## Installation:
 
 ```bash
