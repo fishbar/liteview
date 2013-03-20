@@ -1,9 +1,9 @@
 var jsc = require('jscoverage');
 require = jsc.mock(module);
-var Tc = require('./tcompiler', true);
-var view = require('./view', true).create();
+var Tc = require('../lib/tcompiler', true);
+var view = require('../lib/view', true).create();
 var expect = require('expect.js');
-view.init(__dirname + '/test/');
+view.init(__dirname + '/fixtures/');
 view.constant({
   root: 'const:abc'
 });
@@ -26,14 +26,17 @@ describe('LiteTemplate', function () {
     var res = view.render('script.html', {});
     expect(res.indexOf('\\w')).to.not.be(-1);
   });
+
   it('#{if(regexp)}', function () {
     var res = view.render('regexp.html', {tt: "cc.js"});
     expect(res).to.be('regok');
   });
+
   it('#{set()},#{for()}', function () {
     var res = view.render('for.html');
     expect(res).to.be('012345');
   });
+
   it('file_include', function () {
     var res =  view.render('test.html', {
       title: 'test',
@@ -47,6 +50,7 @@ describe('LiteTemplate', function () {
     });
     expect(res).to.be('<title>test</title><li id="n_0">cat</li><script type="text/javascript">fish</script><div>fish</div><ul><li id="n_0">fish</li></ul>');
   });
+
   it('repeat_syntax', function () {
     var res = view.render('repeat.html', {
       list: [
@@ -57,6 +61,7 @@ describe('LiteTemplate', function () {
     });
     expect(res).to.be('<ul><li>3-0-fish</li>a<li>3-1-cat</li>a<li>3-2-snoopy</li>a</ul>');
   });
+
   it('variable not exist', function () {
     var res = view.render('repeat.html', {
       list: [
@@ -65,6 +70,7 @@ describe('LiteTemplate', function () {
     });
     expect(res).to.be('<ul><li>1-0-</li></ul>');
   });
+
   it('using custom handler', function () {
     var res = view.render('expression.html', {
       list: [
@@ -75,6 +81,7 @@ describe('LiteTemplate', function () {
     });
     expect(res).to.be('<li>01</li>2<li>12</li>133');
   });
+
   it('complex scene',function(){
     var res = view.render('complex.html',{
     list:[
@@ -82,9 +89,10 @@ describe('LiteTemplate', function () {
       {name:'test',com:true},
       {name:'a'}
     ]
-    });  
+    });
     expect(res).to.be('<li>fish<ul><li>cat</li></ul><i>5</i><i>4</i></li><li>test<span>hasCom</span></li><li>a<i>nothing</i></li>');
   });
+
   it('test const, encodeHTML,decodeHTML',function(){
     var res = view.render('constant.html',{
       name : '<abc>',
